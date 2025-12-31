@@ -64,7 +64,7 @@ class SetupPageTools(QObject):
         # SET THEME 
         # ///////////////////////////////////////////////////////////////
         self.setup_push_buttons_style()
-        self.ui.load_pages.lineEdit1.set_stylesheet(
+        self.ui.load_pages.line_api_endpoint.set_stylesheet(
             radius = 8,
             border_size = 2,
             color = self.themes["app_color"]["text_foreground"],
@@ -74,7 +74,7 @@ class SetupPageTools(QObject):
             context_color = self.themes["app_color"]["context_color"]
 
         )
-        self.ui.load_pages.lineEdit2.set_stylesheet(
+        self.ui.load_pages.line_api_key.set_stylesheet(
             radius = 8,
             border_size = 2,
             color = self.themes["app_color"]["text_foreground"],
@@ -84,17 +84,7 @@ class SetupPageTools(QObject):
             context_color = self.themes["app_color"]["context_color"]
 
         )
-        self.ui.load_pages.lineEdit3.set_stylesheet(
-            radius = 8,
-            border_size = 2,
-            color = self.themes["app_color"]["text_foreground"],
-            selection_color = self.themes["app_color"]["white"],
-            bg_color = self.themes["app_color"]["dark_one"],
-            bg_color_active = self.themes["app_color"]["dark_three"],
-            context_color = self.themes["app_color"]["context_color"]
-
-        )
-        self.ui.load_pages.lineEdit1.set_stylesheet(
+        self.ui.load_pages.line_model_name.set_stylesheet(
             radius = 8,
             border_size = 2,
             color = self.themes["app_color"]["text_foreground"],
@@ -105,16 +95,12 @@ class SetupPageTools(QObject):
 
         )
 
-        self.ui.load_pages.comboBox.set_stylesheet(
-            radius = 8,
-            border_size = 2,
-            color = self.themes["app_color"]["text_foreground"],
-            selection_color = self.themes["app_color"]["white"],
-            bg_color = self.themes["app_color"]["dark_one"],
-            bg_color_active = self.themes["app_color"]["dark_three"],
-            context_color = self.themes["app_color"]["context_color"]
-
+        self.ui.load_pages.toggle_local_remote.set_stylesheet(
+            bg_color = self.themes["app_color"]["dark_two"],
+            circle_color = self.themes["app_color"]["icon_color"],
+            active_color = self.themes["app_color"]["context_color"]
         )
+
 
         self.ui.load_pages.checkBox.set_stylesheet(
             bg_color = self.themes["app_color"]["dark_two"],
@@ -122,21 +108,117 @@ class SetupPageTools(QObject):
             active_color = self.themes["app_color"]["context_color"]
         )
 
-        self.ui.load_pages.checkBox_2.set_stylesheet(
-            bg_color = self.themes["app_color"]["dark_two"],
-            circle_color = self.themes["app_color"]["icon_color"],
-            active_color = self.themes["app_color"]["context_color"]
+        self.ui.load_pages.btn_check.set_style(
+            radius=8,
+            color=self.themes["app_color"]["text_foreground"],
+            bg_color=self.themes["app_color"]["dark_one"],
+            bg_color_hover=self.themes["app_color"]["dark_three"],
+            bg_color_pressed=self.themes["app_color"]["dark_four"]
         )
 
-        self.ui.load_pages.plainTextEdit.set_stylesheet(
+        self.ui.load_pages.btn_save_sub.set_style(
+            radius=8,
+            color=self.themes["app_color"]["text_foreground"],
+            bg_color=self.themes["app_color"]["dark_one"],
+            bg_color_hover=self.themes["app_color"]["dark_three"],
+            bg_color_pressed=self.themes["app_color"]["dark_four"]
+        )
+
+        self.ui.load_pages.btn_start_sub.set_style(
+            radius=8,
+            color=self.themes["app_color"]["text_foreground"],
+            bg_color=self.themes["app_color"]["dark_one"],
+            bg_color_hover=self.themes["app_color"]["dark_three"],
+            bg_color_pressed=self.themes["app_color"]["dark_four"]
+        )
+
+        self.circular_progress_sub = PyCircularProgress(
+            value = 75,
+            progress_width = 2,
+            progress_color = self.themes["app_color"]["pink"],
+            text_color = self.themes["app_color"]["white"],
+            font_size = 14,
+            bg_color = self.themes["app_color"]["bg_three"]
+        )
+        self.circular_progress_sub.setFixedSize(140,140)
+        self.ui.load_pages.layout_circular_bar.addWidget(self.circular_progress_sub)
+
+
+        self.table_sub = PyTableWidget(
             radius = 8,
-            border_size = 2,
             color = self.themes["app_color"]["text_foreground"],
-            selection_color = self.themes["app_color"]["white"],
-            bg_color = self.themes["app_color"]["dark_one"],
-            bg_color_active = self.themes["app_color"]["dark_three"],
+            selection_color = self.themes["app_color"]["context_color"],
+            bg_color = self.themes["app_color"]["bg_two"],
+            header_horizontal_color = self.themes["app_color"]["dark_two"],
+            header_vertical_color = self.themes["app_color"]["bg_three"],
+            bottom_line_color = self.themes["app_color"]["bg_three"],
+            grid_line_color = self.themes["app_color"]["bg_one"],
+            scroll_bar_bg_color = self.themes["app_color"]["bg_one"],
+            scroll_bar_btn_color = self.themes["app_color"]["dark_four"],
             context_color = self.themes["app_color"]["context_color"]
         )
+        self.table_sub.setColumnCount(3)
+        self.table_sub.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table_sub.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.table_sub.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        # Columns / Header
+        self.column_index = QTableWidgetItem()
+        self.column_index.setTextAlignment(Qt.AlignCenter)
+        self.column_index.setText("INDEX")
+
+        self.column_time = QTableWidgetItem()
+        self.column_time.setTextAlignment(Qt.AlignCenter)
+        self.column_time.setText("TIME")
+
+        self.column_content = QTableWidgetItem()
+        self.column_content.setTextAlignment(Qt.AlignCenter)
+        self.column_content.setText("CONTENT")
+
+        # Set column
+        self.table_sub.setHorizontalHeaderItem(0, self.column_index)
+        self.table_sub.setHorizontalHeaderItem(1, self.column_time)
+        self.table_sub.setHorizontalHeaderItem(2, self.column_content)
+
+        for x in range(10):
+            row_number = self.table_sub.rowCount()
+            self.table_sub.insertRow(row_number) # Insert row
+            self.table_sub.setItem(row_number, 0, QTableWidgetItem(str("Wanderson"))) # Add name
+            self.table_sub.setItem(row_number, 1, QTableWidgetItem(str("vfx_on_fire_" + str(x)))) # Add nick
+            self.pass_text = QTableWidgetItem()
+            self.pass_text.setTextAlignment(Qt.AlignCenter)
+            self.pass_text.setText("12345" + str(x))
+            self.table_sub.setItem(row_number, 2, self.pass_text) # Add pass
+            self.table_sub.setRowHeight(row_number, 40)
+
+        self.ui.load_pages.layout_subtitle_table.addWidget(self.table_sub)
+
+
+
+
+
+
+        # self.ui.load_pages.comboBox.set_stylesheet(
+        #     radius = 8,
+        #     border_size = 2,
+        #     color = self.themes["app_color"]["text_foreground"],
+        #     selection_color = self.themes["app_color"]["white"],
+        #     bg_color = self.themes["app_color"]["dark_one"],
+        #     bg_color_active = self.themes["app_color"]["dark_three"],
+        #     context_color = self.themes["app_color"]["context_color"]
+
+        # )
+
+    
+        # self.ui.load_pages.plainTextEdit.set_stylesheet(
+        #     radius = 8,
+        #     border_size = 2,
+        #     color = self.themes["app_color"]["text_foreground"],
+        #     selection_color = self.themes["app_color"]["white"],
+        #     bg_color = self.themes["app_color"]["dark_one"],
+        #     bg_color_active = self.themes["app_color"]["dark_three"],
+        #     context_color = self.themes["app_color"]["context_color"]
+        # )
 
     
     def setup_push_buttons_style(self):
@@ -167,15 +249,15 @@ class SetupPageTools(QObject):
         """
         # 连接lineEdit1 (ASR API ENDPOINT)
         if hasattr(self.ui.load_pages, 'lineEdit1'):
-            self.ui.load_pages.lineEdit1.textChanged.connect(self.on_api_endpoint_changed)
+            self.ui.load_pages.line_api_endpoint.textChanged.connect(self.on_api_endpoint_changed)
         
         # 连接lineEdit2 (API KEY)
         if hasattr(self.ui.load_pages, 'lineEdit2'):
-            self.ui.load_pages.lineEdit2.textChanged.connect(self.on_api_key_changed)
+            self.ui.load_pages.line_api_key.textChanged.connect(self.on_api_key_changed)
         
         # 连接lineEdit3 (MODEL NAME)
         if hasattr(self.ui.load_pages, 'lineEdit3'):
-            self.ui.load_pages.lineEdit3.textChanged.connect(self.on_model_name_changed)
+            self.ui.load_pages.line_model_name.textChanged.connect(self.on_model_name_changed)
     
     def on_api_endpoint_changed(self, text):
         """

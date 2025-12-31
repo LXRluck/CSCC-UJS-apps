@@ -437,7 +437,7 @@ class SetupPageVideoPlayer(QObject):
             srt_path=self.temp_srt,
             model_size=self.subtitle_model,
             total_duration=self.total_duration,
-            slice_duration=2,
+            slice_duration=10,
             short_segment_threshold=2
             
         )
