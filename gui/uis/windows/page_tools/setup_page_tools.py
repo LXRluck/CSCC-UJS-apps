@@ -193,9 +193,14 @@ class SetupPageTools(QObject):
 
         self.ui.load_pages.layout_subtitle_table.addWidget(self.table_sub)
 
+        # 测试连通性按钮
+        self.ui.load_pages.btn_check.clicked.connect(self.on_btn_check_clicked)
 
+        # 开始识别按钮
+        self.ui.load_pages.btn_start_sub.clicked.connect(self.on_btn_start_sub_clicked)
 
-
+        # 保存配制按钮
+        self.ui.load_pages.btn_save_sub.clicked.connect(self.on_btn_save_sub_clicked)
 
 
         # self.ui.load_pages.comboBox.set_stylesheet(
@@ -221,6 +226,13 @@ class SetupPageTools(QObject):
         # )
 
     
+    def on_btn_check_clicked(self):
+        test_audio_path = "test_audio.mp3"
+        result = self.test_asr_connection(test_audio_path)
+
+        QMessageBox.information(None, "连通性测试结果", result)
+
+
     def setup_push_buttons_style(self):
         btn_style = {
             "radius": 10,
