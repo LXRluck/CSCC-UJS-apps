@@ -180,6 +180,7 @@ class SetupPageTools(QObject):
         self.table_sub.setHorizontalHeaderItem(1, self.column_time)
         self.table_sub.setHorizontalHeaderItem(2, self.column_content)
 
+        # test
         for x in range(10):
             row_number = self.table_sub.rowCount()
             self.table_sub.insertRow(row_number) # Insert row

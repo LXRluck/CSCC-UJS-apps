@@ -15,8 +15,8 @@ class MPVPlayerCore:
             input_vo_keyboard=True,
             osc=True, 
             # SUBTITLE OPTIONS
-            sid='auto',
-            sub_auto='fuzzy',
+            sid='no',
+            sub_auto='no',
             sub_font_size=24,
             sub_color='#FFFFFF',
             sub_border_color='#000000',
@@ -127,12 +127,54 @@ class MPVPlayerCore:
         #进度更新回调
         self.progress_update_callback = callback
 
-    def set_subtitle_file(self,subtitle_path):
-        #设置字幕文件路径
-        if os.path.exists(subtitle_path):
-            self.mpv_player.sub_file=subtitle_path
-        else:
+    def set_subtitle_file(self, subtitle_path):
+        subtitle_path = os.path.abspath(subtitle_path)
+        if not os.path.exists(subtitle_path):
             raise FileNotFoundError(f"字幕文件不存在：{subtitle_path}")
+    
+        #清除所有旧字幕轨道
+        self._cleanup_all_subtitles()
+    
+        try:
+            self.mpv_player.sid = "no"  # 禁用内置字幕
+            self.mpv_player.sub_auto = "no"  # 关闭自动匹配
+            self.mpv_player.sub_codepage = "utf-8"  # 强制指定编码（兼容绝大多数字幕）
+        
+            self.mpv_player.command("sub-add", subtitle_path)
+        
+            #强制启用新添加的外部字幕轨道
+            self.mpv_player.sub = "1" 
+            self.mpv_player.sub_visibility = True  
+        
+            print(f"字幕切换成功：{subtitle_path}")
+            print(f"当前启用的字幕轨道：{self.mpv_player.sub}")  
+        
+        except Exception as e:
+            # 捕获MPV命令执行异常（如字幕文件损坏）
+            raise RuntimeError(f"切换字幕失败：{str(e)} | 字幕路径：{subtitle_path}")
+
+
+    def _cleanup_all_subtitles(self):
+        # 清除所有注入的字幕轨道
+        for sub_id in self.injected_subtitle_ids:
+            try:
+                self.mpv_player.command("sub-remove", sub_id)
+            except Exception as e:
+                print(f"清除旧轨道{sub_id}失败：{e}")
+        self.injected_subtitle_ids.clear()
+    
+        for temp_file in self.temp_subtitle_files:
+            try:
+                if os.path.exists(temp_file):
+                    os.remove(temp_file)
+            except Exception as e:
+                print(f"删除临时文件{temp_file}失败：{e}")
+        self.temp_subtitle_files.clear()
+    
+        # 清除MPV当前的字幕配置
+        self.mpv_player.sub_file = "" 
+        self.mpv_player.sub = "0" 
+        self.mpv_player.sub_visibility = False 
         
 # 实时字幕注入
 # ///////////////////////////////////////////////////////////////
