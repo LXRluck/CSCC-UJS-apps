@@ -49,12 +49,14 @@ class SetupPageVideoPlayer(QObject):
         self.player_core=None
         self.is_dragging_progress=False
         self.video_select_label = None  # 视频选择提示标签
+        self.video_file_path=None
         # SUBTITLE SETTINGS
         # ///////////////////////////////////////////////////////////////
         self.subtitle_worker = None  # 字幕生成线程
         self.subtitle_thread = None  # 线程容器
         self.temp_srt = None         # 临时字幕文件路径
         self.generate_subtitle_file = True  # 是否保存字幕文件
+        self.subtitle_on=True #是否显示字幕
         self.subtitle_model = "base"  # whisper模型
         self.total_duration=0
 
@@ -165,47 +167,19 @@ class SetupPageVideoPlayer(QObject):
         """)
         self.volume_container.hide()     
 
-        
-# 悬浮窗口字幕
-# ///////////////////////////////////////////////////////////////
-# 还没调试好，字幕尚不能跟随video_widget移动
-        self.subtitle_popup = QWidget()
-        self.subtitle_popup.setWindowFlags(
-            Qt.Popup | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.SubWindow
-        )
-        self.subtitle_popup.setAttribute(Qt.WA_TranslucentBackground)
-        self.subtitle_popup.setStyleSheet("background: transparent;")
 
-        self.subtitle_label = QLabel(self.subtitle_popup)
-        self.subtitle_label.setAlignment(Qt.AlignCenter)
-        self.subtitle_label.setStyleSheet("""
-            QLabel {
-                color: white;
-                font-size: 18px;
-                background: rgba(0,0,0,0.5);
-                padding: 8px 16px;
-                border-radius: 8px;
-                min-width: 200px;
-                max-width: 600px;
-                white-space: pre-wrap; 
-                text-align: center;    
-            }
-        """)
-        # 布局
-        subtitle_layout = QVBoxLayout(self.subtitle_popup)
-        subtitle_layout.addWidget(self.subtitle_label)
-        subtitle_layout.setContentsMargins(0, 0, 0, 0)
-
-        # 初始测试文本
-        self.subtitle_label.setText("测试字幕 - 显示在视频底部居中")
-
+        self.setup_subtitle_menu()
+        # SET CONNECTS
+        # ///////////////////////////////////////////////////////////////    
+        self.ui.load_pages.video_widget.installEventFilter(self)
+        self.volume_container.installEventFilter(self)
+        if hasattr(self.ui, 'central_widget'):
+            self.ui.central_widget.installEventFilter(self)
 
         # SET CONNECTS
         # ///////////////////////////////////////////////////////////////
         self.volume_slider.valueChanged.connect(self.on_volume_changed)
         self.ui.load_pages.volume_btn.clicked.connect(self.toggle_volume_slider)
-        
-        self.ui.load_pages.video_widget.mousePressEvent = self.on_video_widget_click
         
         self.ui.load_pages.stop_btn.clicked.connect(self.on_toggle_play_pause)
         self.ui.load_pages.next_btn.clicked.connect(self.on_fast_forward)
@@ -219,6 +193,30 @@ class SetupPageVideoPlayer(QObject):
         self.is_dragging_progress = False
 
 
+    # EVENT FILTER
+    # ///////////////////////////////////////////////////////////////
+    def eventFilter(self, obj, event):
+        # video_widget event
+        if obj == self.ui.load_pages.video_widget:
+            if event.type() == QEvent.MouseButtonPress:
+                if event.button() == Qt.LeftButton:
+                    self.handle_video_widget_left_click()
+                    return True  
+                elif event.button() == Qt.RightButton:
+                    self.handle_video_widget_right_click(event.globalPos())
+                    return True  
+        
+        # volume container
+        if event.type() == QEvent.MouseButtonPress and not self.volume_container.isHidden():
+            if not self.volume_container.geometry().contains(QCursor.pos()):
+                self.volume_container.hide()
+                return True
+        
+        if obj == self.volume_container and event.type() == QEvent.Resize:
+            self.reposition_volume_container()
+            return True
+        
+        return super().eventFilter(obj, event)
     
 
     # VOLUME FUNCTIONS
@@ -249,8 +247,7 @@ class SetupPageVideoPlayer(QObject):
         else:
             self.volume_container.hide()
 
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
+    def reposition_volume_container(self):
         if not self.volume_container.isHidden():
             btn_widget = self.ui.load_pages.volume_btn
             btn_global_pos = btn_widget.mapToGlobal(QPoint(0, 0))
@@ -263,37 +260,8 @@ class SetupPageVideoPlayer(QObject):
             if container_y < 10:
                 container_y = 10
             self.volume_container.move(container_x, container_y)
-        self.update_subtitle_popup_pos()
 
-    def eventFilter(self, obj, event):
-        # 处理volume_container点击事件
-        if event.type() == QEvent.MouseButtonPress and not self.volume_container.isHidden():
-            if not self.volume_container.geometry().contains(QCursor.pos()):
-                self.volume_container.hide()
-        
-        # 监听video_widget或主窗口的大小/移动/重绘事件
-        target_objs = [self.ui.load_pages.video_widget]
-        if hasattr(self.ui, 'central_widget'):
-            target_objs.append(self.ui.central_widget)
-        
-        if obj in target_objs:
-            # 处理大小变化、位置移动、重绘、窗口激活等事件
-            if event.type() in (
-                QEvent.Resize, QEvent.Move, 
-                QEvent.Show, QEvent.Hide
-            ):
-                # 延迟更新（避免频繁刷新）
-                QTimer.singleShot(10, self.update_subtitle_popup_pos)
-        
-        # 全局鼠标移动事件
-        if event.type() == QEvent.MouseMove and self.subtitle_popup.isVisible():
-            # 每50ms更新一次位置（避免性能问题）
-            if not hasattr(self, '_last_mouse_update') or (
-                QDateTime.currentMSecsSinceEpoch() - self._last_mouse_update > 50
-            ):
-                self.update_subtitle_popup_pos()
-                self._last_mouse_update = QDateTime.currentMSecsSinceEpoch()
-        return super().eventFilter(obj, event)
+    
     # PROGRESSBAR FUNCTIONS
     # ///////////////////////////////////////////////////////////////
     @staticmethod
@@ -311,18 +279,22 @@ class SetupPageVideoPlayer(QObject):
         return self.player_core.get_position()
     
     def update_progress_ui(self, current_pos=None, duration=None):
-        if current_pos is None:
-            current_pos = self.player_core.get_position()
         if duration is None:
             duration = self.total_duration
-    
         if self.is_dragging_progress or duration == 0:
             return
-        progress_percent = (current_pos / duration) * 1000
-        self.ui.load_pages.progressbar.setValue(int(progress_percent))
-        current_time = SetupPageVideoPlayer.format_time(current_pos)
-        total_time = SetupPageVideoPlayer.format_time(duration)
-        self.ui.load_pages.progress_label.setText(f"{current_time}/{total_time}")
+        if current_pos is None:
+            current_pos = self.player_core.get_position()
+        if not self.is_dragging_progress: 
+            if current_pos is None:
+                current_pos = self.player_core.get_position()
+
+            progress_percent = (current_pos / duration) * 1000
+            self.ui.load_pages.progressbar.setValue(int(progress_percent))
+
+            current_time = SetupPageVideoPlayer.format_time(current_pos)
+            total_time = SetupPageVideoPlayer.format_time(duration)
+            self.ui.load_pages.progress_label.setText(f"{current_time}/{total_time}")
 
     def on_progress_slider_pressed(self):
         self.is_dragging_progress = True
@@ -337,6 +309,7 @@ class SetupPageVideoPlayer(QObject):
         if duration > 0:
             new_pos = (slider_value / 1000) * duration
             self.player_core.set_position(new_pos)
+            self.update_progress_ui(new_pos, duration)
             if not self.player_core.is_playing and self.player_core.current_file:
                 self.player_core.toggle_play_pause()
 
@@ -354,26 +327,36 @@ class SetupPageVideoPlayer(QObject):
     
     # PLAYER FUNCTIONS
     # ///////////////////////////////////////////////////////////////
-    def on_video_widget_click(self, event):
-        if event.button() == Qt.LeftButton:
-            file_path, _ = QFileDialog.getOpenFileName(
-                self.ui.load_pages.video_widget,
-                "选择播放文件",
-                os.path.expanduser("~"),
-                "视频文件 (*.mp4 *.avi *.mkv *.mov *.flv *.wmv);;音频文件 (*.mp3 *.wav *.flac *.aac);;所有文件 (*.*)"
-            )
-            if file_path and os.path.exists(file_path):
-                self.total_duration=self.player_core.load_video(file_path)
-                file_name = os.path.basename(file_path)
-                self.total_duration=self.player_core.get_duration()
-                self.ui.load_pages.video_widget.setToolTip(f"当前播放：{file_name}\n点击可更换文件")
+    def handle_video_widget_left_click(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self.ui.load_pages.video_widget,
+            "选择播放文件",
+            os.path.expanduser("~"),
+            "视频文件 (*.mp4 *.avi *.mkv *.mov *.flv *.wmv);;音频文件 (*.mp3 *.wav *.flac *.aac);;所有文件 (*.*)"
+        )
+        if file_path and os.path.exists(file_path):
+
+            self.is_dragging_progress=False
+            self.ui.load_pages.progressbar.setValue(0)
+            self.ui.load_pages.progress_label.setText("00:00/00:00")
+
+            self.player_core.load_video(file_path)
+            self.total_duration=self.player_core.get_duration()
+
+            file_name = os.path.basename(file_path)
+            self.ui.load_pages.video_widget.setToolTip(f"当前播放：{file_name}\n点击可更换文件")
+            
+            self.video_file_path=file_path
+            # 隐藏视频选择提示标签
+            if self.video_select_label:
+                self.video_select_label.hide()
                 
-                # 隐藏视频选择提示标签
-                if self.video_select_label:
-                    self.video_select_label.hide()
-                
-                self.start_subtitle_worker(file_path)
-                
+            self.update_progress_ui(0,self.total_duration)
+
+            #self.start_subtitle_worker(file_path)
+    def handle_video_widget_right_click(self,global_pos):
+        self.show_subtitle_menu(global_pos)
+
     def stop_playback(self):
         self.player_core.stop()
         self.ui.load_pages.video_widget.setToolTip("点击选择视频/音频文件播放")
@@ -431,12 +414,6 @@ class SetupPageVideoPlayer(QObject):
             QMessageBox.warning(self.ui.load_pages.video_widget, "提示", str(e))
         except Exception as e:
             QMessageBox.warning(self.ui.load_pages.video_widget, "错误", f"快退失败：{str(e)}")
-
-
-
-    # def progress_callback(pos, duration):
-    #     if duration > 0:
-    #         print(f"最终时长：{duration}")
     
     # SUBTITLE FUNCTIONS
     # ///////////////////////////////////////////////////////////////
@@ -526,6 +503,98 @@ class SetupPageVideoPlayer(QObject):
         self.generate_subtitle_file = generate_file
         self.subtitle_model = model_size
     
+    # SUBTITLE MENU
+    # ///////////////////////////////////////////////////////////////
+    def setup_subtitle_menu(self):
+        self.subtitle_menu=QMenu(self.ui.load_pages.video_widget)
+        self.subtitle_menu.setStyleSheet("""
+        QMenu {
+            background-color: #1e1e1e;  
+            color: #d4d4d4;             
+            border: 1px solid #3c3c3c;  
+            border-radius: 4px;
+            padding: 4px 0;
+        }
+        QMenu::item {
+            padding: 6px 24px;  
+            margin: 0;
+        }
+        QMenu::item:selected {
+            background-color: #0a7aca;  
+            color: white;
+        }
+        QMenu::separator {
+            height: 1px;
+            background-color: #3c3c3c;
+            margin: 4px 8px;
+        }
+        QMenu::shortcut {
+            color: #8a8a8a;  
+        }
+        """)
+    
+    def show_subtitle_menu(self,pos):
+        if not hasattr(self.player_core, 'current_file') or not self.player_core.current_file:
+            self.subtitle_menu.clear()
+            action_tip = QAction("⚠ 请先选择视频文件播放", self.subtitle_menu)
+            action_tip.setDisabled(True)
+            self.subtitle_menu.addAction(action_tip)
+        else:
+            self.subtitle_menu.clear()
+            
+            self.action_insert_exist_subtitle_file=QAction("选择已有字幕...",self.subtitle_menu)
+            self.action_insert_exist_subtitle_file.triggered.connect(self.on_load_exist_subtitle)
+            
+            self.action_toggle_open_subtitle=QAction("关闭字幕...",self.subtitle_menu)
+            self.action_toggle_open_subtitle.triggered.connect(self.on_toggle_open_subtitle)
+
+            self.action_generate_subtitle=QAction("自动生成字幕...",self.subtitle_menu)
+            self.action_generate_subtitle.triggered.connect(self.on_generate_subtitle)
+            
+            if self.subtitle_on is True :
+                self.action_toggle_open_subtitle.setText("关闭字幕")
+            else:    
+                self.action_toggle_open_subtitle.setText("显示字幕")
+
+            self.subtitle_menu.addAction(self.action_insert_exist_subtitle_file)
+            self.subtitle_menu.addAction(self.action_toggle_open_subtitle)
+            self.subtitle_menu.addAction(self.action_generate_subtitle)
+    
+        #在鼠标右键点击位置显示菜单
+        self.subtitle_menu.exec(pos)
+
+
+    def on_load_exist_subtitle(self):
+        #print("on_load_exist_subtitle")
+        file_path, _ = QFileDialog.getOpenFileName(
+            self.ui.load_pages.video_widget,
+            "选择字幕文件",
+            os.path.expanduser("~"),
+            "字幕文件 (*.srt);;所有文件 (*.*)"
+        )
+        if file_path and os.path.exists(file_path):
+            self.player_core.set_subtitle_file(file_path)
+    def on_toggle_open_subtitle(self):
+        if self.subtitle_on is True:
+            if self.player_core and self.player_core.mpv_player:
+                self.subtitle_on=False
+                self.player_core.mpv_player.sub_visibility = False
+            #print("self.subtitle_on=False")
+        else:
+            
+            if self.player_core and self.player_core.mpv_player:
+                self.subtitle_on=True
+                self.player_core.mpv_player.sub_visibility = True
+            #print("self.subtitle_on=False")
+    def on_generate_subtitle(self):
+        self.start_subtitle_worker(self.video_file_path)
+
+
+
+
+
+
+
 
 
     # KEYWORD FUNCTIONS
@@ -581,3 +650,4 @@ class SetupPageVideoPlayer(QObject):
     #     self.generate_subtitle_file = generate_file
     #     self.subtitle_model = model_size
     
+

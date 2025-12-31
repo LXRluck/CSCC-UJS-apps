@@ -197,13 +197,14 @@ class MPVPlayerCore:
         current_pos = self.get_position()
     
         increment = total_duration * 0.01
+        
         if increment <= 0: 
             return
-    
+
         new_pos = min(current_pos + increment, total_duration)
     
-
-        self.set_position(new_pos)
+        if increment<5: self.set_position(new_pos+5)
+        else: self.set_position(new_pos)
 
     def fast_rewind(self):
         if not self.current_file:
@@ -215,7 +216,7 @@ class MPVPlayerCore:
         increment = total_duration * 0.01
         if increment <= 0:
             return
-    
+
         new_pos = max(current_pos - increment, 0)
         self.set_position(new_pos)
 
