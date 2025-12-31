@@ -4,3 +4,4 @@ __pycache__/
 .pyc
 gui/core/libmpv-2.dll
 .ruff_cache/
+temp/libmpv-2.dll
