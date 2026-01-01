@@ -39,6 +39,9 @@ from gui.core.player_core import MPVPlayerCore
 from gui.core.subtitle_core import SubtitleWorker,clean_temp
 
 # TEMP
+from gui.uis.windows.page_tools import SetupPageTools
+from gui.core.keyword_core import KeywordAbstract
+from gui.core.summary_core import Summary
 
 class SetupPageVideoPlayer(QObject):
     def __init__(self):
@@ -76,7 +79,10 @@ class SetupPageVideoPlayer(QObject):
         # ///////////////////////////////////////////////////////////////
         themes = Themes()
         self.themes = themes.items
-
+        # TEMP
+        self.tools_setup=SetupPageTools()
+        self.tools_setup.ui=self.ui
+        self.tools_setup.setup_tools()
         # SET THEME 
         # ///////////////////////////////////////////////////////////////
         self.ui.load_pages.next_btn.set_icon(Functions.set_svg_icon("forward.svg"))
@@ -432,10 +438,9 @@ class SetupPageVideoPlayer(QObject):
 
         # 2. 创建字幕生成线程
         self.subtitle_worker = SubtitleWorker(
-            mpv_player=self.player_core,
+            asr_client=self.tools_setup.asr_client,
             video_path=video_path,
             srt_path=self.temp_srt,
-            model_size=self.subtitle_model,
             total_duration=self.total_duration,
             slice_duration=10,
             short_segment_threshold=2
@@ -464,11 +469,7 @@ class SetupPageVideoPlayer(QObject):
         if success:
             # 加载完整的SRT字幕文件
             try:
-                # 直接使用sub_file属性设置字幕文件
-                self.player_core.mpv_player.sub_file = self.temp_srt
-                
-                # 确保字幕可见
-                self.player_core.mpv_player.sub_visibility = True
+                self.player_core.set_subtitle_file(self.temp_srt)
                 
                 # 打印调试信息
                 print(f"字幕文件已加载：{self.temp_srt}")
@@ -485,6 +486,7 @@ class SetupPageVideoPlayer(QObject):
         self.subtitle_thread.wait()
         self.subtitle_worker = None
         self.subtitle_thread = None
+        self.start_keyword_worker()
 
     
     def stop_subtitle_worker(self):
@@ -600,54 +602,152 @@ class SetupPageVideoPlayer(QObject):
     # KEYWORD FUNCTIONS
     # ///////////////////////////////////////////////////////////////
     # 关键字提取线程
-    # def start_keyword_worker(self):
-        
-    #     self.keyword_worker = keyword_abstract(
-    #         srt_path=self.temp_srt,
-    #     )
-    #     self.keyword_thread = QThread()
-    #     self.keyword_worker.moveToThread(self.subtitle_thread)
+    def start_keyword_worker(self):
+        # 1. 先判断 temp_srt 是否存在，避免传空路径
+        if not self.temp_srt or not os.path.exists(self.temp_srt):
+            QMessageBox.warning(
+                self.ui.load_pages.video_widget,
+                "参数错误",
+                "字幕文件不存在，无法提取关键字！\n请先生成或加载字幕。"
+            )
+            return
 
-    #    
-    #     self.keyword_worker.progress.connect(self.on_keyword_progress)
-    #     self.keyword_worker.finished.connect(self.on_keyword_finished)
-    #     self.keyword_thread.started.connect(self.keyword_worker.run)
+        self.keyword_worker = KeywordAbstract(srt_path=self.temp_srt)
+        self.keyword_thread = QThread(parent=self)  # 设置父对象，避免内存泄漏
+        self.keyword_worker.moveToThread(self.keyword_thread)
 
-    # 
-    #     self.keyword_thread.start()
-    #     QMessageBox.information(self.ui.load_pages.video_widget,"开始提取关键词，请稍候...")
+        self.keyword_worker.progress.connect(self.on_keyword_progress)
+        self.keyword_worker.finished.connect(self.on_keyword_finished)
+        self.keyword_thread.started.connect(self.keyword_worker.run)
+        self.keyword_thread.finished.connect(self.keyword_thread.deleteLater)
 
-    # def on_keyword_progress(self, msg, progress):
-    #     print(f"关键字提取进度：{progress}% - {msg}")  
-    # def on_keyword_finished(self, success, msg):
-    #     if success:
-    #         self.player_core.set_subtitle_file(self.temp_srt)
-    #         QMessageBox.information(self.ui.load_pages.video_widget, "成功", msg)
-    #     else:
-    #         QMessageBox.warning(self.ui.load_pages.video_widget, "失败", msg)
-    #     for index,key in self.keyword_worker.keywords:
-    #         print(f"关键字 {index+1}:{key}")
-        
-    #     self.keyword_thread.quit()
-    #     self.keyword_thread.wait()
-    #     self.keyword_worker = None
-    #     self.keyword_thread = None
+        self.keyword_thread.start()
+        QMessageBox.information(
+            self.ui.load_pages.video_widget,
+            "关键词提取",
+            "关键词提取已启动，可在后台运行\n进度将在控制台打印"
+        )
 
+    def on_keyword_progress(self, msg, progress):
+        print(f"关键字提取进度：{progress}% - {msg}")  
+
+    def on_keyword_finished(self, success, msg):
     
-    # def stop_keyword_worker(self):
-    #     if self.keyword_worker and self.keyword_thread:
-    #         self.keyword_worker.stop()
-    #         self.keyword_thread.quit()
-    #         self.keyword_thread.wait()
-    #         self.keyword_worker = None
-    #         self.keyword_thread = None
-        
-    #     if self.temp_srt and not self.generate_subtitle_file and os.path.exists(self.temp_srt):
-    #         clean_temp([self.temp_srt])
-    #     self.temp_srt = None
+        if success:
+            QMessageBox.information(self.ui.load_pages.video_widget, "成功", msg)
+            self.show_keywords()
+        else:
+            QMessageBox.warning(self.ui.load_pages.video_widget, "失败", msg)
 
-    # def set_keyword_settings(self, generate_file: bool, model_size: str):
-    #     self.generate_subtitle_file = generate_file
-    #     self.subtitle_model = model_size
+        if self.keyword_thread and self.keyword_thread.isRunning():
+            self.keyword_thread.quit()
+            self.keyword_thread.wait()  
+        self.keyword_worker = None
+        self.keyword_thread = None
+        self.start_summary_worker()
+
+    def stop_keyword_worker(self):
+        if self.keyword_worker and self.keyword_thread and self.keyword_thread.isRunning():
+            self.keyword_worker.stop()
+            self.keyword_thread.quit()
+            self.keyword_thread.wait()
+            self.keyword_worker = None
+            self.keyword_thread = None
+
+    def set_keyword_settings(self, keyword_topK: int = 4):
+   
+        self.keyword_topK = keyword_topK  
+
+
+    def show_keywords(self):
+        topK=0
+        for index, key in enumerate(self.keyword_worker.keywords):
+            print(f"关键字 {index+1}: {key}")
+            btn_attr_name = f"pushButton_{index+1}"
+
+            if hasattr(self.ui.load_pages, btn_attr_name):
+                btn = getattr(self.ui.load_pages, btn_attr_name)
+                btn.setText(f"{key}")
+                btn.show()
+                topK=index
+            else:
+                print(f"Warning: Button {btn_attr_name} not found in load_pages!")
+        for btn_num in range(topK+2, 11):
+            btn_attr_name = f"pushButton_{btn_num}"
+            if hasattr(self.ui.load_pages, btn_attr_name):
+                btn = getattr(self.ui.load_pages, btn_attr_name)
+                btn.setText("KEYWORD")
+                btn.hide()
+            else:
+                print(f"Warning: Button {btn_attr_name} not found in load_pages!")
+
+
+
+
+
+# KEYWORD FUNCTIONS
+    # ///////////////////////////////////////////////////////////////
+    # 摘要提取线程
+    def start_summary_worker(self):
+        if not self.temp_srt or not os.path.exists(self.temp_srt):
+            QMessageBox.warning(
+                self.ui.load_pages.video_widget,
+                "参数错误",
+                "字幕文件不存在，无法生成摘要！\n请先生成或加载字幕。"
+            )
+            return
+        srt_dir = os.path.dirname(self.temp_srt)  
+        self.temp_txt = os.path.join(srt_dir, "temp.txt")
+        self.summary_worker = Summary(srt_path=self.temp_srt,txt_path=self.temp_txt,topK=4)
+        self.summary_thread = QThread(parent=self)  # 设置父对象，避免内存泄漏
+        self.summary_worker.moveToThread(self.summary_thread)
+
+        self.summary_worker.progress.connect(self.on_keyword_progress)
+        self.summary_worker.finished.connect(self.on_keyword_finished)
+        self.summary_thread.started.connect(self.summary_worker.run)
+        self.summary_thread.finished.connect(self.summary_thread.deleteLater)
+
+        self.summary_thread.start()
+        QMessageBox.information(
+            self.ui.load_pages.video_widget,
+            "关键词提取",
+            "关键词提取已启动，可在后台运行\n进度将在控制台打印"
+        )
+
+    def on_summary_progress(self, msg, progress):
+        print(f"摘要进度：{progress}% - {msg}")  
+
+    def on_summary_finished(self, success, msg):
+        if success:
+            QMessageBox.information(self.ui.load_pages.video_widget, "成功", msg)
+        else:
+            QMessageBox.warning(self.ui.load_pages.video_widget, "失败", msg)
+
+        # 停止线程
+        if self.keyword_thread and self.keyword_thread.isRunning():
+            self.keyword_thread.quit()
+            self.keyword_thread.wait()  
+        self.keyword_worker = None
+        self.keyword_thread = None
+
+    def on_summary_result(self, sentences):
+
+        self.ui.load_pages.plainTextEdit.clear()  # 替换为你的plaintextedit控件名
     
+        # 整理摘要内容（按权重排序后的关键句）
+        summary_text = ""
+        # 按权重降序排列（可选，TextRank4Sentence返回的结果已经按权重排序）
+        sorted_sentences = sorted(sentences, key=lambda x: x['weight'], reverse=True)
 
+        for idx, item in enumerate(sorted_sentences, 1):
+            summary_text += f"{idx}. {item['sentence']}\n\n"
+    
+        self.ui.load_pages.plainTextEdit.setPlainText(summary_text)
+
+    def stop_summary_worker(self):
+        if self.keyword_worker and self.keyword_thread and self.keyword_thread.isRunning():
+            self.keyword_worker.stop()
+            self.keyword_thread.quit()
+            self.keyword_thread.wait()
+            self.keyword_worker = None
+            self.keyword_thread = None

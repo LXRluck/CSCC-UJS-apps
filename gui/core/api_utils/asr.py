@@ -1,6 +1,3 @@
-# ASR API 工具模块
-# 用于调用语音转文本 API 服务
-
 import requests
 from typing import Optional
 from pathlib import Path

@@ -44,6 +44,7 @@ class SetupPageTools(QObject):
         self.current_api_endpoint = ""
         self.current_api_key = ""
         self.current_model_name = ""
+        self.current_file_path=r"D:\video\small_test.mp3"
 
     # SETUP PAGE_VIDEOPLAYER
     # ///////////////////////////////////////////////////////////////
@@ -64,6 +65,15 @@ class SetupPageTools(QObject):
         # SET THEME 
         # ///////////////////////////////////////////////////////////////
         self.setup_push_buttons_style()
+        self.ui.load_pages.line_file.set_stylesheet(
+            radius = 8,
+            border_size = 2,
+            color = self.themes["app_color"]["text_foreground"],
+            selection_color = self.themes["app_color"]["white"],
+            bg_color = self.themes["app_color"]["dark_one"],
+            bg_color_active = self.themes["app_color"]["dark_three"],
+            context_color = self.themes["app_color"]["context_color"]
+        )
         self.ui.load_pages.line_api_endpoint.set_stylesheet(
             radius = 8,
             border_size = 2,
@@ -108,6 +118,14 @@ class SetupPageTools(QObject):
             active_color = self.themes["app_color"]["context_color"]
         )
 
+        self.ui.load_pages.btn_file.set_style(
+            radius=8,
+            color=self.themes["app_color"]["text_foreground"],
+            bg_color=self.themes["app_color"]["dark_one"],
+            bg_color_hover=self.themes["app_color"]["dark_three"],
+            bg_color_pressed=self.themes["app_color"]["dark_four"]
+        )
+
         self.ui.load_pages.btn_check.set_style(
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
@@ -125,6 +143,14 @@ class SetupPageTools(QObject):
         )
 
         self.ui.load_pages.btn_start_sub.set_style(
+            radius=8,
+            color=self.themes["app_color"]["text_foreground"],
+            bg_color=self.themes["app_color"]["dark_one"],
+            bg_color_hover=self.themes["app_color"]["dark_three"],
+            bg_color_pressed=self.themes["app_color"]["dark_four"]
+        )
+
+        self.ui.load_pages.btn_apply.set_style(
             radius=8,
             color=self.themes["app_color"]["text_foreground"],
             bg_color=self.themes["app_color"]["dark_one"],
@@ -194,70 +220,48 @@ class SetupPageTools(QObject):
 
         self.ui.load_pages.layout_subtitle_table.addWidget(self.table_sub)
 
-
-
-
-
-
-        # self.ui.load_pages.comboBox.set_stylesheet(
-        #     radius = 8,
-        #     border_size = 2,
-        #     color = self.themes["app_color"]["text_foreground"],
-        #     selection_color = self.themes["app_color"]["white"],
-        #     bg_color = self.themes["app_color"]["dark_one"],
-        #     bg_color_active = self.themes["app_color"]["dark_three"],
-        #     context_color = self.themes["app_color"]["context_color"]
-
-        # )
-
-    
-        # self.ui.load_pages.plainTextEdit.set_stylesheet(
-        #     radius = 8,
-        #     border_size = 2,
-        #     color = self.themes["app_color"]["text_foreground"],
-        #     selection_color = self.themes["app_color"]["white"],
-        #     bg_color = self.themes["app_color"]["dark_one"],
-        #     bg_color_active = self.themes["app_color"]["dark_three"],
-        #     context_color = self.themes["app_color"]["context_color"]
-        # )
-
-    
-    def setup_push_buttons_style(self):
-        btn_style = {
-            "radius": 10,
-            "color": self.themes["app_color"]["text_foreground"],
-            "bg_color": self.themes["app_color"]["dark_one"],
-            "bg_color_hover": self.themes["app_color"]["dark_three"],
-            "bg_color_pressed": self.themes["app_color"]["dark_four"]
-        }
-        for btn_num in range(1, 11):
-            btn_attr_name = f"pushButton_{btn_num}"
-
-            if hasattr(self.ui.load_pages, btn_attr_name):
-                btn = getattr(self.ui.load_pages, btn_attr_name)
-                btn.set_style(**btn_style)
-                btn.setMinimumHeight(80)
-                btn.setText("KEYWORD")
-            else:
-                print(f"Warning: Button {btn_attr_name} not found in load_pages!")
-        
         # 连接API配置输入框的信号
         self.connect_api_config_signals()
+
+        self.ui.load_pages.btn_check.clicked.connect(self.on_check_status)
+        self.ui.load_pages.btn_apply.clicked.connect(self.apply_api_settings)
+
+        self.ui.load_pages.comboBox.set_stylesheet(
+            radius = 8,
+            border_size = 2,
+            color = self.themes["app_color"]["text_foreground"],
+            selection_color = self.themes["app_color"]["white"],
+            bg_color = self.themes["app_color"]["dark_one"],
+            bg_color_active = self.themes["app_color"]["dark_three"],
+            context_color = self.themes["app_color"]["context_color"]
+
+        )
+
     
+        self.ui.load_pages.plainTextEdit.set_stylesheet(
+            radius = 8,
+            border_size = 2,
+            color = self.themes["app_color"]["text_foreground"],
+            selection_color = self.themes["app_color"]["white"],
+            bg_color = self.themes["app_color"]["dark_one"],
+            bg_color_active = self.themes["app_color"]["dark_three"],
+            context_color = self.themes["app_color"]["context_color"]
+        )
+
     def connect_api_config_signals(self):
         """
         连接API配置输入框的信号，实时监听配置变化
         """
-        # 连接lineEdit1 (ASR API ENDPOINT)
-        if hasattr(self.ui.load_pages, 'lineEdit1'):
+         # 连接line_api_endpoint (ASR API ENDPOINT)
+        if hasattr(self.ui.load_pages, 'line_api_endpoint'):
             self.ui.load_pages.line_api_endpoint.textChanged.connect(self.on_api_endpoint_changed)
-        
-        # 连接lineEdit2 (API KEY)
-        if hasattr(self.ui.load_pages, 'lineEdit2'):
+    
+        # 连接line_api_key (API KEY)
+        if hasattr(self.ui.load_pages, 'line_api_key'):
             self.ui.load_pages.line_api_key.textChanged.connect(self.on_api_key_changed)
-        
-        # 连接lineEdit3 (MODEL NAME)
-        if hasattr(self.ui.load_pages, 'lineEdit3'):
+    
+        # 连接line_model_name (MODEL NAME)
+        if hasattr(self.ui.load_pages, 'line_model_name'):
             self.ui.load_pages.line_model_name.textChanged.connect(self.on_model_name_changed)
     
     def on_api_endpoint_changed(self, text):
@@ -306,6 +310,7 @@ class SetupPageTools(QObject):
         Returns:
             tuple: (api_endpoint, api_key, model_name)
         """
+
         return (
             self.current_api_endpoint,
             self.current_api_key,
@@ -321,7 +326,7 @@ class SetupPageTools(QObject):
         """
         return self.asr_client
     
-    def test_asr_connection(self, audio_file_path):
+    def test_asr_connection(self,audio_path):
         """
         测试ASR连接和API调用（示例方法）
         
@@ -342,7 +347,7 @@ class SetupPageTools(QObject):
             
             # 调用ASR客户端进行语音识别
             result = self.asr_client.transcribe(
-                file_path=audio_file_path,
+                file_path=audio_path,
                 model=self.current_model_name
             )
             
@@ -357,10 +362,42 @@ class SetupPageTools(QObject):
             return f"文件错误：{str(e)}"
         except Exception as e:
             return f"请求失败：{str(e)}"
+        
+    def on_check_status(self):
+        res=self.test_asr_connection(self.current_file_path)
+        if res.startswith("识别成功"): 
+            self.ui.load_pages.label_status.setText("CONNECTED")
+            self.ui.load_pages.label_status.setStyleSheet("color: #00FF00;") 
+        else:
+            self.ui.load_pages.label_status.setText("ERROR")
+            self.ui.load_pages.label_status.setStyleSheet("color: #FF0000;")
+
+    def apply_api_settings(self):
+        self.current_api_endpoint=self.ui.load_pages.line_api_endpoint.text()
+        self.current_api_key=self.ui.load_pages.line_api_key.text()
+        self.current_model_name=self.ui.load_pages.line_model_name.text()
+        #self.current_file_path=self.ui.load_pages.line_file.text()
+        self.update_api_config()
 
     
+    def setup_push_buttons_style(self):
+        btn_style = {
+            "radius": 10,
+            "color": self.themes["app_color"]["text_foreground"],
+            "bg_color": self.themes["app_color"]["dark_one"],
+            "bg_color_hover": self.themes["app_color"]["dark_three"],
+            "bg_color_pressed": self.themes["app_color"]["dark_four"]
+        }
+        for btn_num in range(1, 11):
+            btn_attr_name = f"pushButton_{btn_num}"
 
-    
+            if hasattr(self.ui.load_pages, btn_attr_name):
+                btn = getattr(self.ui.load_pages, btn_attr_name)
+                btn.set_style(**btn_style)
+                btn.setMinimumHeight(80)
+                btn.setText("KEYWORD")
+            else:
+                print(f"Warning: Button {btn_attr_name} not found in load_pages!")
 
 
-
+        

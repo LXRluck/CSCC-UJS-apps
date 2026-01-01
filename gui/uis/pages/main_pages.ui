@@ -32,7 +32,7 @@
    <item>
     <widget class="QStackedWidget" name="pages">
      <property name="currentIndex">
-      <number>3</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="page_home">
       <property name="styleSheet">
@@ -183,8 +183,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>233</width>
-            <height>265</height>
+            <width>875</width>
+            <height>685</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -386,7 +386,44 @@ color: rgb(255, 255, 255);</string>
       </layout>
      </widget>
      <widget class="QWidget" name="page_tool">
-      <layout class="QVBoxLayout" name="verticalLayout_9">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="0,6,0">
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>文件路径</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="PyLineEdit" name="line_file">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>当前文件路径</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="PyPushButton" name="btn_file">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>浏览...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,0">
          <item>
@@ -548,6 +585,19 @@ color: rgb(255, 255, 255);</string>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_11">
          <item>
+          <widget class="PyPushButton" name="btn_apply">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>应用API</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="PyPushButton" name="btn_check">
            <property name="minimumSize">
             <size>
@@ -570,6 +620,19 @@ color: rgb(255, 255, 255);</string>
             <string>UNKOWN</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -644,7 +707,7 @@ color: rgb(255, 255, 255);</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page">
+     <widget class="QWidget" name="page_keyword">
       <layout class="QVBoxLayout" name="verticalLayout_13">
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_10">

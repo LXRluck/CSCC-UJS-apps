@@ -1,4 +1,4 @@
-import os
+import os,re
 import sys
 import time
 import tempfile
@@ -8,7 +8,7 @@ import whisper
 from opencc import OpenCC
 import subprocess
 from tqdm import tqdm
-
+from gui.core.api_utils.asr import ASRClient
 # 字幕生成
 # 音频切片，可以正常识别音频并输出分片字幕
 def clean_temp(files):
@@ -24,9 +24,9 @@ class SubtitleWorker(QObject):
     finished = Signal(bool, str)
     subtitle_updated = Signal(float,float,str)  
 
-    def __init__(self,mpv_player, video_path, srt_path, model_size, total_duration, slice_duration=10, short_segment_threshold=2.0):
+    def __init__(self,asr_client, video_path, srt_path, model_size, total_duration, slice_duration=10, short_segment_threshold=2.0):
         super().__init__()
-        self.mpv_player=mpv_player
+        self.asr_client=asr_client
         self.video_path = video_path
         self.srt_path = srt_path
         self.model_size = model_size
@@ -41,11 +41,12 @@ class SubtitleWorker(QObject):
         self.total_duration=total_duration
 
     def preload_model(self):
-        """预加载Whisper模型（避免实时识别时卡顿）"""
+        # """预加载Whisper模型（避免实时识别时卡顿）"""
+        # self.progress.emit("正在加载识别模型...", 5)
+        # self.model = whisper.load_model(self.model_size)
+        # self.progress.emit("模型加载完成", 10)
+        """预加载API"""
         self.progress.emit("正在加载识别模型...", 5)
-        self.model = whisper.load_model(self.model_size)
-        self.progress.emit("模型加载完成", 10)
-
     def extract_audio_slice(self, start_time, duration, output_file):
         cmd = [
             'ffmpeg',
@@ -136,15 +137,19 @@ class SubtitleWorker(QObject):
                         current_time += self.slice_duration
                         continue
 
-                    # 识别切片音频
-                    result = self.model.transcribe(
-                        temp_audio,
-                        language="zh",
-                        verbose=None,  # 使用None完全禁用输出
-                        fp16=False,
-                        no_speech_threshold=0.1
+                    #识别切片音频
+                    # result = self.model.transcribe(
+                    #     temp_audio,
+                    #     language="zh",
+                    #     verbose=None,  # 使用None完全禁用输出
+                    #     fp16=False,
+                    #     no_speech_threshold=0.1
+                    # )
+                    res = self.asr_client.transcribe(
+                        file_path=temp_audio,
+                        model="TeleAI/TeleSpeechASR"
                     )
-
+                    #之前写死强制以slice_duration为字幕起止时间间隔
                     # 解析识别结果并处理短片段合并
                     if result["segments"]:
                         for seg in result["segments"]:
