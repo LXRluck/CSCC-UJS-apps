@@ -57,9 +57,9 @@ class MainWindow(QMainWindow):
 
         # SETUP PAGE_VIDEOPLAYER
         # ///////////////////////////////////////////////////////////////  
-        self.tools_setup=SetupPageTools()
-        self.tools_setup.ui=self.ui
-        self.tools_setup.setup_tools()
+        # self.tools_setup=SetupPageTools()
+        # self.tools_setup.ui=self.ui
+        # self.tools_setup.setup_tools()
 
 
         # SET WINDOW TITLE AND ICON
@@ -117,10 +117,18 @@ class MainWindow(QMainWindow):
         # LOAD PAGE TOOLS
         if btn.objectName() == "btn_tools":
             # Select Menu
-            self.ui.left_menu.select_only_one_tab(btn.objectName())
+            self.ui.left_menu.select_only_one(btn.objectName())
 
             # Load Page 3 
             MainFunctions.set_page(self, self.ui.load_pages.page_tool)
+
+        # LOAD PAGE KEYWORD
+        if btn.objectName() == "btn_keyword":
+            # Select Menu
+            self.ui.left_menu.select_only_one(btn.objectName())
+
+            # Load Page 3 
+            MainFunctions.set_page(self, self.ui.load_pages.page_keyword)
 
 
         # BOTTOM INFORMATION

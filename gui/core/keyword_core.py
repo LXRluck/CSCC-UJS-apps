@@ -29,23 +29,33 @@ from PySide6.QtCore import QObject, Signal
 
 jieba.setLogLevel(logging.CRITICAL)
 
-class keyword_abstract(QObject):
-    progress = Signal(str, int)# 进度信息：状态+百分比
-    finished = Signal(bool, str)# 完成信息：是否成功+信息
+import logging
+import re
+import jieba
+import jieba.analyse as analyse
+from PySide6.QtCore import QObject, Signal
+
+jieba.setLogLevel(logging.CRITICAL)
+
+class KeywordAbstract(QObject):  
+    progress = Signal(str, int)  
+    finished = Signal(bool, str)  
 
     def __init__(self, srt_path):
         """初始化"""
         super().__init__()
         self.srt_path = srt_path
-        self.isrunning = True
-        
-        self.subtitle_text=""
+        self.is_running = True  
+        self.subtitle_text = ""
         self.keywords = []
 
     def extract_subtitle_text(self):
         """提取SRT文件中的纯字幕文本（过滤序号、时间轴、格式符号）"""
+        if not self.is_running:
+            raise RuntimeError("任务已被取消")
+        
+        self.progress.emit("正在读取SRT文件：", 10)
         try:
-            self.progress.emit("正在读取SRT文件：", 10)
             with open(self.srt_path, "r", encoding="utf-8") as f:
                 srt_content = f.read()
 
@@ -60,32 +70,51 @@ class keyword_abstract(QObject):
             # 合并为纯文本
             self.subtitle_text = '\n'.join(lines)
             self.progress.emit("提取纯文本完成：", 30)
-            return self.subtitle_text
 
         except Exception as e:
-            self.finished.emit(False, f"提取纯文本失败：{str(e)}")
-            raise
+            raise RuntimeError(f"提取纯文本失败：{str(e)}")
 
-    def keyword_abstract(self):
+    def extract_keywords(self):  
         """提取关键字"""
-        try:
-            self.extract_subtitle_text()
-            self.progress.emit("正在为您提取关键字：", 20)
-            self.isrunning = True
-            # 使用TFIDF算法,提取关键字
-            self.keywords = analyse.tfidf(self.subtitle_text, topK = 4)
-            self.progress.emit("正在为您提取关键字：", 50)
-        except Exception as e:
-            self.finished(False, f"提取失败：{str(e)}")
-            raise
-    
+        if not self.is_running:
+            raise RuntimeError("任务已被取消")
+        
+        self.progress.emit("正在提取关键字：", 40)  
+        # 使用TFIDF算法提取关键字
+        self.keywords = analyse.tfidf(self.subtitle_text, topK=4)
+        
+        if not self.is_running:
+            raise RuntimeError("任务已被取消")
+        
+        self.progress.emit("关键字提取完成：", 80)
+
     def run(self):
-        # 先初始化
-        self.__init__()
-                   
-        # 提取关键字
-        self.keyword_abstract()
+        """主执行方法，统一处理流程和信号触发"""
+        try:
+            self.is_running = True
+            self.progress.emit("任务开始", 0)
+            
+            # 分步执行，每步检查是否被停止
+            self.extract_subtitle_text()
+            if not self.is_running:
+                raise RuntimeError("任务已被取消")
+            
+            self.extract_keywords()
+            if not self.is_running:
+                raise RuntimeError("任务已被取消")
+
+            # 任务正常完成
+            self.progress.emit("任务完成", 100)
+            self.finished.emit(True, f"关键字提取成功：{','.join(self.keywords)}")
+
+        except Exception as e:
+            # 异常时触发失败信号
+            self.finished.emit(False, str(e))
+        finally:
+            # 重置运行状态
+            self.is_running = False
 
     def stop(self):
-        self.isrunning = False
+        """停止任务"""
+        self.is_running = False
         self.progress.emit("正在取消提取：", 0)

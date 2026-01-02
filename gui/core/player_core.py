@@ -30,6 +30,9 @@ class MPVPlayerCore:
         self.injected_subtitle_ids = []
         self.temp_sub_track_id=None
 
+        self.temp_sub_file=None
+        self.subtitle_counter = 0
+
         self.duration_loaded = False
 
         self.current_speed = 1.0
@@ -172,64 +175,133 @@ class MPVPlayerCore:
         self.mpv_player.sub = "0" 
         self.mpv_player.sub_visibility = False 
         
-# 临时字幕注入
-# ///////////////////////////////////////////////////////////////    
-# mpv命令参数有问题，无法实时注入字幕
-    def inject_mpv_subtitle(self, subtitle_text):
-
-        if not isinstance(subtitle_text, str):
-            print(f"字幕文本类型错误，要求字符串，实际为：{type(subtitle_text)} | 内容：{subtitle_text}")
+# 实时字幕注入
+# ///////////////////////////////////////////////////////////////
+    def inject_mpv_subtitle(self, start_time, end_time, subtitle_text, custom_track_id=None):
+        """
+        实时注入字幕（复用同一轨道+同一文件，多次调用不覆盖）
+        
+        Args:
+            start_time: 字幕开始时间（秒）
+            end_time: 字幕结束时间（秒）
+            subtitle_text: 字幕文本
+            custom_track_id: 显式指定轨道ID（如2）
+        """
+        # 1. 基础状态校验（保持原逻辑）
+        if not self.current_file or not self.is_playing:
+            print("注入失败：未加载视频或未播放")
             return
-    
-        subtitle_text = subtitle_text.strip()
-        if not subtitle_text or not self.mpv_player:
+        if not isinstance(subtitle_text, str) or not subtitle_text.strip():
+            print("注入失败：字幕文本为空或格式错误")
+            return
+        if not isinstance(start_time, (int, float)) or not isinstance(end_time, (int, float)):
+            print("注入失败：时间格式错误")
             return
 
         try:
-            # 2. 解析字幕时间和内容（适配 srt 格式）
-            time_pattern = r"(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})"
-            match = re.search(time_pattern, subtitle_text)
-            if not match:
-                print(f"字幕格式解析失败，未匹配到时间轴 | 内容：{subtitle_text}")
-                return
+            # 2. 追加字幕到临时文件（核心：不新建，只追加）
+            self._append_sub_to_temp_file(start_time, end_time, subtitle_text)
 
-            # 转换 SRT 时间为秒数
-            start_time = self._srt_time_to_seconds(match.group(1))
-            end_time = self._srt_time_to_seconds(match.group(2))
-            content = re.sub(time_pattern, "", subtitle_text).strip()
-        
-            if not content or start_time >= end_time:
-                print(f"字幕内容为空或时间轴无效 | 开始：{start_time} 结束：{end_time} 内容：{content}")
-                return
+            # 3. 轨道处理：首次调用创建，后续调用刷新
+            if not self.injected_subtitle_ids:
+                # 3.1 首次注入：创建轨道并绑定临时文件
+                try:
+                    if custom_track_id is not None:
+                        # 显式指定ID（如2）
+                        self.mpv_player.command(
+                            "sub-add", self.temp_sub_file, "select", f"track-id={custom_track_id}"
+                        )
+                        sub_id = custom_track_id
+                    else:
+                        # 自动分配ID
+                        sub_id = self.mpv_player.command("sub-add", self.temp_sub_file, "select")
 
-            sub_content = f"{start_time:.3f} --> {end_time:.3f}\n{content}"
-        
-            self.mpv_player.command(
-                "sub-add", 
-                sub_content, 
-                "select,temporary"
-            )
-        
-            # 记录注入的字幕轨道ID
-            self.injected_subtitle_ids.append(self.mpv_player.sub)
+                    # 记录轨道ID（后续复用）
+                    self.injected_subtitle_ids.append(sub_id)
+                    # 激活轨道并显示
+                    self.mpv_player.sid = "no"  # 禁用内置字幕
+                    self.mpv_player.sub = sub_id  # 激活当前轨道
+                    self.mpv_player.sub_visibility = True
+                    self.mpv_player.sub_auto = "no"
+                    print(f"首次注入：轨道ID={sub_id}，内容={subtitle_text[:20]}...")
+
+                except Exception as cmd_err:
+                    print(f"创建轨道失败：{cmd_err}")
+                    return
+            else:
+                # 3.2 后续注入：刷新轨道（MPV自动重读临时文件）
+                sub_id = self.injected_subtitle_ids[0]
+                self.mpv_player.command("sub-reload", sub_id)  # 关键：刷新轨道
+                print(f"追加注入：轨道ID={sub_id}，内容={subtitle_text[:20]}...")
 
         except Exception as e:
-            print(f"字幕注入失败：{type(e).__name__} - {e} | 字幕内容：{subtitle_text[:100]}")
+            print(f"注入总失败：{type(e).__name__} - {e}")
 
-    def _srt_time_to_seconds(self, srt_time):
-        #转换 SRT 时间格式
-        try:
-            hours, minutes, seconds = srt_time.split(":")
-            seconds, milliseconds = seconds.split(",")
-            total_seconds = (
-            int(hours) * 3600
-            + int(minutes) * 60
-            + int(seconds)
-            + int(milliseconds) / 1000
+    def _cleanup_all_subtitles(self):
+        # 1. 清理轨道
+        for sub_id in self.injected_subtitle_ids:
+            try:
+                self.mpv_player.command("sub-remove", sub_id)
+                print(f"清理轨道：{sub_id}")
+            except Exception as e:
+                print(f"清理轨道{sub_id}失败：{e}")
+        self.injected_subtitle_ids.clear()
+
+        # 2. 清理临时文件（仅1个）
+        if self.temp_sub_file and os.path.exists(self.temp_sub_file):
+            try:
+                os.remove(self.temp_sub_file)
+                print(f"清理临时文件：{self.temp_sub_file}")
+            except Exception as e:
+                print(f"清理文件{self.temp_sub_file}失败：{e}")
+        self.temp_sub_file = None  # 重置
+
+        # 3. 重置字幕序号（下次注入从1开始）
+        self.subtitle_counter = 0
+
+        # 4. 重置MPV字幕配置
+        self.mpv_player.sub_file = ""
+        self.mpv_player.sub = "0"
+        self.mpv_player.sub_visibility = False
+
+    def _seconds_to_srt_time(self, seconds):
+        """修复：支持超过1天的秒数转SRT时间格式 (HH:MM:SS,mmm)"""
+        total_seconds = int(seconds)
+        milliseconds = int((seconds - total_seconds) * 1000)
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        secs = total_seconds % 60
+        return f"{hours:02d}:{minutes:02d}:{secs:02d},{milliseconds:03d}"
+
+
+    def _append_sub_to_temp_file(self, start_time, end_time, subtitle_text):
+        """追加字幕条目到复用的临时SRT文件"""
+        # 1. 首次调用：创建临时文件（delete=False表示不自动删除）
+        if not self.temp_sub_file:
+            temp_file_obj = tempfile.NamedTemporaryFile(
+                mode='w', 
+                suffix='.srt', 
+                delete=False, 
+                encoding='utf-8',
+                newline='\n'  # 强制LF换行，兼容MPV解析
             )
-            return total_seconds
-        except:
-            return 0.0
+            self.temp_sub_file = temp_file_obj.name
+            temp_file_obj.close()  # 先关闭，后续用追加模式打开
+
+        # 2. 递增字幕序号（SRT格式要求：每个条目序号唯一且递增）
+        self.subtitle_counter += 1
+        # 3. 转换时间格式（保持原逻辑）
+        start_str = self._seconds_to_srt_time(start_time)
+        end_str = self._seconds_to_srt_time(end_time)
+        # 4. 构造SRT条目（标准格式：序号+时间轴+文本+空行）
+        srt_entry = f"{self.subtitle_counter}\n{start_str} --> {end_str}\n{subtitle_text}\n\n"
+
+        # 5. 追加写入文件（关键：用'a'模式而非'w'模式，避免覆盖）
+        with open(self.temp_sub_file, 'a', encoding='utf-8', newline='\n') as f:
+            f.write(srt_entry)
+            f.flush()  # 强制刷新缓冲区
+            os.fsync(f.fileno())  # 确保内容写入磁盘（MPV能读取到）
+
 
     def fast_forward(self):
         if not self.current_file:

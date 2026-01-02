@@ -75,6 +75,14 @@ class SetupMainWindow:
             "is_active" : False
         },
         {
+            "btn_icon" : "icon_attachment.svg",
+            "btn_id" : "btn_keyword",
+            "btn_text" : "keywords",
+            "btn_tooltip" : "summmary",
+            "show_top" : True,
+            "is_active" : False
+        },
+        {
             "btn_icon" : "icon_info.svg",
             "btn_id" : "btn_info",
             "btn_text" : "Information",

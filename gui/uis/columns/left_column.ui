@@ -65,7 +65,7 @@
            <height>40</height>
           </size>
          </property>
-         <layout class="QVBoxLayout" name="btn_1_layout">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,3">
           <property name="spacing">
            <number>0</number>
           </property>
@@ -81,6 +81,31 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="styleSheet">
+             <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="text">
+             <string>显示位置</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="PyComboBox" name="comboBox">
+            <item>
+             <property name="text">
+              <string>底部</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>顶部</string>
+             </property>
+            </item>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -98,32 +123,47 @@
            <height>40</height>
           </size>
          </property>
-         <layout class="QVBoxLayout" name="btn_2_layout">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,3">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="styleSheet">
+             <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="text">
+             <string>字体颜色</string>
+            </property>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignmentFlag::AlignTop">
+           <widget class="QPushButton" name="pushButton">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+            </property>
+            <property name="text">
+             <string>Text</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="PyListWidget" name="videoItem_list">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="spacing">
-          <number>10</number>
+        <widget class="QWidget" name="btn_3_widget" native="true"/>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_2" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>40</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -227,9 +267,9 @@ Add Qt Widgets or your custom widgets here.</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PyListWidget</class>
-   <extends>QListWidget</extends>
-   <header location="global">gui.widgets.py_list_widget</header>
+   <class>PyComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">gui.widgets.py_combobox.py_combobox</header>
   </customwidget>
  </customwidgets>
  <resources/>

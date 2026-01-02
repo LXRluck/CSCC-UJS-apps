@@ -6,3 +6,4 @@ stop\next\prev_btn初始颜色异常
 较短视频快进异常（时长/100小于1s） x
 video_widget独立句柄受子窗口select_label污染（目前运行没有影响，但是会报错）
 播放完成后select_label不再次显示
+textrank4zh的依赖networkx版本自冲突
