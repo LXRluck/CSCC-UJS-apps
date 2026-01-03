@@ -2,12 +2,12 @@
     "app_name": "CSCC-UJS-PLAYER",
     "version" : "v1.0.0",
     "copyright" : "By: UJS-三人行",
-    "year" : 2021,
+    "year" : 2026,
     "theme_name" : "default",
     "custom_title_bar": true,
     "startup_size": [
-        1400,
-        720
+        1600,
+        900
     ],
     "minimum_size": [
         960,

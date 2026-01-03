@@ -19,6 +19,8 @@ from gui.uis.windows.main_window import *
 from gui.uis.windows.page_videoplayer.setup_page_videoplayer import SetupPageVideoPlayer
 # PAGE TOOLS
 from gui.uis.windows.page_tools.setup_page_tools import SetupPageTools
+# PAGE SETTINGS
+from gui.uis.windows.page_settings.setup_page_settings import SetupPageSettings
 # IMPORT PY ONE DARK WIDGETS
 # ///////////////////////////////////////////////////////////////
 from gui.widgets import *
@@ -55,12 +57,18 @@ class MainWindow(QMainWindow):
         self.video_player_setup.ui=self.ui
         self.video_player_setup.setup_player()
 
-        # SETUP PAGE_VIDEOPLAYER
+        # SETUP PAGE_TOOLS
         # ///////////////////////////////////////////////////////////////  
-        # self.tools_setup=SetupPageTools()
-        # self.tools_setup.ui=self.ui
-        # self.tools_setup.setup_tools()
+        self.tools_setup=SetupPageTools()
+        self.tools_setup.ui=self.ui
+        self.tools_setup.setup_page_tools()
+        self.tools_setup.bind_video_class(self.video_player_setup)
 
+        # SETUP PAGE_SETTINGS
+        # ///////////////////////////////////////////////////////////////  
+        self.settings_setup=SetupPageSettings()
+        self.settings_setup.ui=self.ui
+        self.settings_setup.setup_page_settings()
 
         # SET WINDOW TITLE AND ICON
         # ///////////////////////////////////////////////////////////////
@@ -104,7 +112,7 @@ class MainWindow(QMainWindow):
             self.ui.left_menu.select_only_one(btn.objectName())
 
             # Load Page 2
-            MainFunctions.set_page(self, self.ui.load_pages.page_tools)
+            MainFunctions.set_page(self, self.ui.load_pages.page_samples)
 
         # LOAD PAGE VIDEO PLAYER
         if btn.objectName() == "btn_video":
@@ -115,20 +123,20 @@ class MainWindow(QMainWindow):
             MainFunctions.set_page(self, self.ui.load_pages.page_videoplayer)
 
         # LOAD PAGE TOOLS
-        if btn.objectName() == "btn_tools":
+        if btn.objectName() == "btn_tool_lab":
             # Select Menu
             self.ui.left_menu.select_only_one(btn.objectName())
 
             # Load Page 3 
-            MainFunctions.set_page(self, self.ui.load_pages.page_tool)
+            MainFunctions.set_page(self, self.ui.load_pages.page_tools)
 
         # LOAD PAGE KEYWORD
-        if btn.objectName() == "btn_keyword":
+        if btn.objectName() == "btn_settings_light":
             # Select Menu
             self.ui.left_menu.select_only_one(btn.objectName())
 
             # Load Page 3 
-            MainFunctions.set_page(self, self.ui.load_pages.page_keyword)
+            MainFunctions.set_page(self, self.ui.load_pages.page_settings)
 
 
         # BOTTOM INFORMATION

@@ -188,7 +188,7 @@ class MPVPlayerCore:
             custom_track_id: 显式指定轨道ID（如2）
         """
         # 1. 基础状态校验（保持原逻辑）
-        if not self.current_file or not self.is_playing:
+        if not self.current_file:
             print("注入失败：未加载视频或未播放")
             return
         if not isinstance(subtitle_text, str) or not subtitle_text.strip():

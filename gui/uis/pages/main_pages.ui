@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>895</width>
-    <height>0</height>
+    <height>697</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
    <item>
     <widget class="QStackedWidget" name="pages">
      <property name="currentIndex">
-      <number>3</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="page_home">
       <property name="styleSheet">
@@ -144,7 +144,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_api_tools">
+     <widget class="QWidget" name="page_samples">
       <layout class="QVBoxLayout" name="page_2_layout">
        <property name="spacing">
         <number>5</number>
@@ -385,363 +385,744 @@ color: rgb(255, 255, 255);</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_tool">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+     <widget class="QWidget" name="page_settings">
+      <layout class="QVBoxLayout" name="verticalLayout_19">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="0,6,0">
-         <item>
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string>文件路径</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="PyLineEdit" name="line_file">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>当前文件路径</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="PyPushButton" name="btn_file">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>浏览...</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,0">
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="styleSheet">
-            <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
-color: rgb(255, 255, 255);</string>
-           </property>
-           <property name="text">
-            <string>ASR API ENDPOINT</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="PyLineEdit" name="line_api_endpoint">
-           <property name="minimumSize">
-            <size>
-             <width>80</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>https://api.siliconflow.cn/v1/audio/transcriptions</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>100</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
-         <item>
-          <widget class="QLabel" name="label_4">
-           <property name="styleSheet">
-            <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
-color: rgb(255, 255, 255);</string>
-           </property>
-           <property name="text">
-            <string>API KEY</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="PyLineEdit" name="line_api_key">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>sk-</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>100</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
-         <item>
-          <widget class="QLabel" name="label_5">
-           <property name="styleSheet">
-            <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
-color: rgb(255, 255, 255);</string>
-           </property>
-           <property name="text">
-            <string>MODEL NAME</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="PyLineEdit" name="line_model_name">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>TeleAI/TeleSpeechASR</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,0,0">
-         <item>
-          <widget class="QLabel" name="label_8">
-           <property name="styleSheet">
-            <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
-color: rgb(255, 255, 255);</string>
-           </property>
-           <property name="text">
-            <string>REMOTE/LOCAL</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="PyToggle" name="toggle_local_remote">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>200</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_11">
-         <item>
-          <widget class="PyPushButton" name="btn_apply">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>应用API</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="PyPushButton" name="btn_check">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>检测连通性</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_status">
-           <property name="styleSheet">
-            <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
-color: rgb(255, 255, 255);</string>
-           </property>
-           <property name="text">
-            <string>UNKOWN</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_5">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,4">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,1,3">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_7">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="styleSheet">
+          <string notr="true">QGroupBox {
+    border: 2px solid rgb(255, 255, 255);
+    padding-top: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+	font: 14pt &quot;JetBrains Mono&quot;;
+    color: rgb(255, 255, 255);
+}</string>
+         </property>
+         <property name="title">
+          <string>设置</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="styleSheet">
+             <string notr="true">QGroupBox {
+    border: 2px solid rgb(255, 255, 255);
+    padding-top: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+	font: 14pt &quot;JetBrains Mono&quot;;
+    color: rgb(255, 255, 255);
+}
+</string>
+            </property>
+            <property name="title">
+             <string>api设置</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_14">
              <item>
-              <widget class="PyPushButton" name="btn_start_sub">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>生成字幕</string>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="styleSheet">
+                    <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+                   </property>
+                   <property name="text">
+                    <string>ASR API ENDPOINT</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>100</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="PyLineEdit" name="line_api_endpoint">
+                 <property name="minimumSize">
+                  <size>
+                   <width>80</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>https://api.siliconflow.cn/v1/audio/transcriptions</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
-              <widget class="PyPushButton" name="btn_save_sub">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>导出字幕</string>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_15">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                 <item>
+                  <widget class="QLabel" name="label_4">
+                   <property name="styleSheet">
+                    <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+                   </property>
+                   <property name="text">
+                    <string>API KEY</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>100</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="PyLineEdit" name="line_api_key">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>sk-</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_16">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                 <item>
+                  <widget class="QLabel" name="label_5">
+                   <property name="styleSheet">
+                    <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+                   </property>
+                   <property name="text">
+                    <string>MODEL NAME</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_3">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="PyLineEdit" name="line_model_name">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>TeleAI/TeleSpeechASR</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,0,0">
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+                 </property>
+                 <property name="text">
+                  <string>REMOTE/LOCAL</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="PyToggle" name="toggle_local_remote">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_4">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>200</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <item>
+                <widget class="PyPushButton" name="btn_apply">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>应用API</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="PyPushButton" name="btn_check">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>检测连通性</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_status">
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+                 </property>
+                 <property name="text">
+                  <string>UNKOWN</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
              </item>
             </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_10">
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="styleSheet">
+             <string notr="true">QGroupBox {
+    border: 2px solid rgb(255, 255, 255);
+    padding-top: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+	font: 14pt &quot;JetBrains Mono&quot;;
+    color: rgb(255, 255, 255);
+}</string>
+            </property>
+            <property name="title">
+             <string>字幕设置</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_17">
              <item>
-              <widget class="QLabel" name="label_6">
+              <layout class="QHBoxLayout" name="horizontalLayout_16">
+               <item>
+                <widget class="QLabel" name="label_12">
+                 <property name="maximumSize">
+                  <size>
+                   <width>250</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+                 </property>
+                 <property name="text">
+                  <string>字幕生成模型</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="PyComboBox" name="comboBox_sub_model">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>funasr</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>whisper</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>api</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_7">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="0,0,0">
+               <item>
+                <widget class="QLabel" name="label_13">
+                 <property name="maximumSize">
+                  <size>
+                   <width>250</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+                 </property>
+                 <property name="text">
+                  <string>是否生成字幕文件</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="PyToggle" name="toggle_save_subtitles">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_8">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>200</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="styleSheet">
+             <string notr="true">QGroupBox {
+    border: 2px solid rgb(255, 255, 255);
+    padding-top: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+	font: 14pt &quot;JetBrains Mono&quot;;
+    color: rgb(255, 255, 255);
+}</string>
+            </property>
+            <property name="title">
+             <string>主题</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_18">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_18">
+               <item>
+                <widget class="QLabel" name="label_14">
+                 <property name="maximumSize">
+                  <size>
+                   <width>250</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+                 </property>
+                 <property name="text">
+                  <string>应用主题</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="PyComboBox" name="comboBox_themes">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>dark</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>lignt</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_9">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_tools">
+      <layout class="QVBoxLayout" name="verticalLayout_13">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="0,6,0">
+             <item>
+              <widget class="QLabel" name="label_7">
                <property name="styleSheet">
                 <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
 color: rgb(255, 255, 255);</string>
                </property>
                <property name="text">
-                <string>temp_Setting</string>
+                <string>视频文件路径</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="PyToggle" name="checkBox">
+              <widget class="PyLineEdit" name="line_file">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
                <property name="text">
-                <string/>
+                <string>当前文件路径</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="PyPushButton" name="btn_file">
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>浏览...</string>
                </property>
               </widget>
              </item>
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="layout_circular_bar"/>
+            <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,4">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,1,3">
+               <item>
+                <widget class="PyPushButton" name="btn_start_sub">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>生成字幕</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="PyPushButton" name="btn_save_sub">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>导出字幕</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                 <item>
+                  <widget class="QLabel" name="label_6">
+                   <property name="styleSheet">
+                    <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+                   </property>
+                   <property name="text">
+                    <string>启用编辑</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="PyToggle" name="toggle_edit">
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="layout_circular_bar"/>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,4">
+               <item>
+                <widget class="QLabel" name="label_3">
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+color: rgb(255, 255, 255);</string>
+                 </property>
+                 <property name="text">
+                  <string>字幕输出</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="layout_subtitle_table"/>
+               </item>
+              </layout>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,4">
+          <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>
-            <widget class="QLabel" name="label_3">
-             <property name="styleSheet">
-              <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+            <layout class="QHBoxLayout" name="horizontalLayout_12">
+             <item>
+              <widget class="QLabel" name="label_9">
+               <property name="styleSheet">
+                <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
 color: rgb(255, 255, 255);</string>
-             </property>
-             <property name="text">
-              <string>字幕输出</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="layout_subtitle_table"/>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="page_keyword">
-      <layout class="QVBoxLayout" name="verticalLayout_13">
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_10">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,7">
-           <item>
-            <widget class="QLabel" name="label_9">
-             <property name="styleSheet">
-              <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
+               </property>
+               <property name="text">
+                <string>关键词提取</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_6">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_20">
+               <item>
+                <widget class="QLabel" name="label_15">
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;
 color: rgb(255, 255, 255);</string>
-             </property>
-             <property name="text">
-              <string>关键词提取</string>
-             </property>
-            </widget>
+                 </property>
+                 <property name="text">
+                  <string>关键词个数</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="PyComboBox" name="comboBox_keynum">
+                 <property name="minimumSize">
+                  <size>
+                   <width>150</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>1</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>2</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>3</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>4</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="PyPushButton" name="btn_keyword">
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>提取关键词</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="1,1">
+            <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,1">
              <item>
               <layout class="QGridLayout" name="gridLayout">
                <item row="0" column="2">
                 <widget class="PyPushButton" name="pushButton_3">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
@@ -749,6 +1130,21 @@ color: rgb(255, 255, 255);</string>
                </item>
                <item row="1" column="2">
                 <widget class="PyPushButton" name="pushButton_7">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
@@ -756,6 +1152,21 @@ color: rgb(255, 255, 255);</string>
                </item>
                <item row="1" column="3">
                 <widget class="PyPushButton" name="pushButton_8">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
@@ -763,6 +1174,21 @@ color: rgb(255, 255, 255);</string>
                </item>
                <item row="0" column="3">
                 <widget class="PyPushButton" name="pushButton_4">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
@@ -770,6 +1196,21 @@ color: rgb(255, 255, 255);</string>
                </item>
                <item row="1" column="4">
                 <widget class="PyPushButton" name="pushButton_10">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
@@ -777,20 +1218,65 @@ color: rgb(255, 255, 255);</string>
                </item>
                <item row="0" column="1">
                 <widget class="PyPushButton" name="pushButton_2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
                 </widget>
                </item>
                <item row="1" column="0">
-                <widget class="PyPushButton" name="pushButton_5">
+                <widget class="PyPushButton" name="pushButton_9">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
                 </widget>
                </item>
                <item row="0" column="4">
-                <widget class="PyPushButton" name="pushButton_9">
+                <widget class="PyPushButton" name="pushButton_5">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
@@ -798,6 +1284,21 @@ color: rgb(255, 255, 255);</string>
                </item>
                <item row="0" column="0">
                 <widget class="PyPushButton" name="pushButton_1">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
@@ -805,6 +1306,21 @@ color: rgb(255, 255, 255);</string>
                </item>
                <item row="1" column="1">
                 <widget class="PyPushButton" name="pushButton_6">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">font: 14pt &quot;JetBrains Mono&quot;;</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
@@ -813,7 +1329,7 @@ color: rgb(255, 255, 255);</string>
               </layout>
              </item>
              <item>
-              <spacer name="horizontalSpacer_6">
+              <spacer name="horizontalSpacer_10">
                <property name="orientation">
                 <enum>Qt::Orientation::Horizontal</enum>
                </property>
@@ -832,7 +1348,7 @@ color: rgb(255, 255, 255);</string>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
+            <layout class="QHBoxLayout" name="horizontalLayout_14">
              <item>
               <widget class="QLabel" name="label_10">
                <property name="styleSheet">
@@ -845,7 +1361,20 @@ color: rgb(255, 255, 255);</string>
               </widget>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_14">
+              <spacer name="horizontalSpacer_11">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_19">
                <item>
                 <widget class="QLabel" name="label_11">
                  <property name="styleSheet">
@@ -858,31 +1387,64 @@ color: rgb(255, 255, 255);</string>
                 </widget>
                </item>
                <item>
-                <widget class="PyComboBox" name="comboBox">
+                <widget class="PyComboBox" name="comboBox_topK">
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
+                   <width>150</width>
                    <height>30</height>
                   </size>
                  </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
                  <item>
                   <property name="text">
-                   <string>粗略</string>
+                   <string>1</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>简单</string>
+                   <string>2</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>详细</string>
+                   <string>4</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>8</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>16</string>
                   </property>
                  </item>
                 </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <widget class="PyPushButton" name="btn_summary">
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>提取摘要</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>

@@ -41,20 +41,21 @@ class KeywordAbstract(QObject):
     progress = Signal(str, int)  
     finished = Signal(bool, str)  
 
-    def __init__(self, srt_path):
+    def __init__(self,subtext=None,srt_path=None,topK=4):
         """初始化"""
         super().__init__()
         self.srt_path = srt_path
-        self.is_running = True  
-        self.subtitle_text = ""
+        self.subtitle_text = subtext
+        self.is_running = True 
+        self.topK = topK 
         self.keywords = []
 
     def extract_subtitle_text(self):
-        """提取SRT文件中的纯字幕文本（过滤序号、时间轴、格式符号）"""
+        """提取SRT文件中的纯字幕文本"""
         if not self.is_running:
             raise RuntimeError("任务已被取消")
         
-        self.progress.emit("正在读取SRT文件：", 10)
+        self.progress.emit("正在读取SRT文件:", 10)
         try:
             with open(self.srt_path, "r", encoding="utf-8") as f:
                 srt_content = f.read()
@@ -80,9 +81,10 @@ class KeywordAbstract(QObject):
             raise RuntimeError("任务已被取消")
         
         self.progress.emit("正在提取关键字：", 40)  
-        # 使用TFIDF算法提取关键字
-        self.keywords = analyse.tfidf(self.subtitle_text, topK=4)
-        
+        print(self.topK)
+        print(self.subtitle_text)
+        self.keywords = analyse.textrank(self.subtitle_text, topK = self.topK)
+        print(self.keywords)
         if not self.is_running:
             raise RuntimeError("任务已被取消")
         
@@ -93,28 +95,25 @@ class KeywordAbstract(QObject):
         try:
             self.is_running = True
             self.progress.emit("任务开始", 0)
-            
-            # 分步执行，每步检查是否被停止
-            self.extract_subtitle_text()
+            print(self.subtitle_text)
+            # if self.srt_path is not None:
+            #     self.extract_subtitle_text()
             if not self.is_running:
                 raise RuntimeError("任务已被取消")
             
             self.extract_keywords()
+
             if not self.is_running:
                 raise RuntimeError("任务已被取消")
+            
 
-            # 任务正常完成
             self.progress.emit("任务完成", 100)
             self.finished.emit(True, f"关键字提取成功：{','.join(self.keywords)}")
-
+            print(f"关键字提取成功：{','.join(self.keywords)}")
         except Exception as e:
-            # 异常时触发失败信号
             self.finished.emit(False, str(e))
         finally:
-            # 重置运行状态
             self.is_running = False
-
     def stop(self):
-        """停止任务"""
         self.is_running = False
         self.progress.emit("正在取消提取：", 0)

@@ -68,17 +68,17 @@ class SetupMainWindow:
         },
         {
             "btn_icon" : "icon_tools.svg",
-            "btn_id" : "btn_tools",
-            "btn_text" : "AI tools",
-            "btn_tooltip" : "AI tools",
+            "btn_id" : "btn_tool_lab",
+            "btn_text" : "Tool Lab",
+            "btn_tooltip" : "Tool Lab",
             "show_top" : True,
             "is_active" : False
         },
         {
-            "btn_icon" : "icon_attachment.svg",
-            "btn_id" : "btn_keyword",
-            "btn_text" : "keywords",
-            "btn_tooltip" : "summmary",
+            "btn_icon" : "icon_settings_light.svg",
+            "btn_id" : "btn_settings_light",
+            "btn_text" : "Settings",
+            "btn_tooltip" : "Settings",
             "show_top" : True,
             "is_active" : False
         },
